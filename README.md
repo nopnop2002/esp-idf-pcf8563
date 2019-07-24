@@ -52,3 +52,9 @@ you have to change mode using menuconfig.
 
 ![pcf8563-14](https://user-images.githubusercontent.com/6020549/61298986-38f97780-a81a-11e9-99ab-6c4954373735.jpg)
 
+---
+
+# Time difference of 1 week later.   
+
+![pcf8563-1week](https://user-images.githubusercontent.com/6020549/61800860-c5361b00-ae68-11e9-8b7d-ed64529f25fe.jpg)
+
