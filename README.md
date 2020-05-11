@@ -17,7 +17,7 @@ you have to set these config value using menuconfig.
 
 ![config-pcf8563-1](https://user-images.githubusercontent.com/6020549/61298760-c38da700-a819-11e9-858c-a1ef2f03cf18.jpg)
 
-![config-pcf8563-2](https://user-images.githubusercontent.com/6020549/61298768-c7b9c480-a819-11e9-9d4a-c2fe71a92e83.jpg)
+![config-pcf8563-2](https://user-images.githubusercontent.com/6020549/81560443-61b3b480-93cc-11ea-8763-c3d2bfab0fe3.jpg)
 
 you have to set gpio & NTP Server using menuconfig.   
 
