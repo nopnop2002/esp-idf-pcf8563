@@ -8,7 +8,6 @@ make menuconfig
 make flash
 ```
 
----
 
 # Set Clock Mode   
 
@@ -25,7 +24,6 @@ you have to set gpio & NTP Server using menuconfig.
 
 ![config-pcf8563-12](https://user-images.githubusercontent.com/6020549/61298840-e3bd6600-a819-11e9-8bc2-1c36525bc2b6.jpg)
 
----
 
 # Get Clock Mode   
 
@@ -38,7 +36,6 @@ you have to change mode using menuconfig.
 
 ![pcf8563-13](https://user-images.githubusercontent.com/6020549/61298923-10717d80-a81a-11e9-91c4-2136030eb2eb.jpg)
 
----
 
 # Get the time difference of NTP and RTC   
 
@@ -52,15 +49,18 @@ you have to change mode using menuconfig.
 
 ![pcf8563-14](https://user-images.githubusercontent.com/6020549/61298986-38f97780-a81a-11e9-99ab-6c4954373735.jpg)
 
----
 
 # Time difference of 1 week later.   
 
 ![pcf8563-1week](https://user-images.githubusercontent.com/6020549/61800860-c5361b00-ae68-11e9-8b7d-ed64529f25fe.jpg)
 
----
 
 # Time difference of 1 month later.   
 
 ![pcf8563-1month](https://user-images.githubusercontent.com/6020549/63231385-021de380-c256-11e9-9872-17ccc8a698b9.jpg)
+
+# Comparison with other RTCs
+This module has a large time lag.   
+I recommend the DS3231 RTC.   
+https://github.com/nopnop2002/esp-idf-ds3231
 
