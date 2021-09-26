@@ -1,13 +1,24 @@
 # esp-idf-pcf8563
 PCF8563 RTC Driver for esp-idf
 
+# Installation
 ```
 git clone https://github.com/nopnop2002/esp-idf-pcf8563
 cd esp-idf-pcf8563
-make menuconfig
-make flash
+idf.py menuconfig
+idf.py flash
 ```
 
+# Wireing  
+
+|PCF8563||ESP32|
+|:-:|:-:|:-:|
+|SCL|--|GPIO15(*1)|
+|SDA|--|GPIO16(*1)|
+|GND|--|GND|
+|VCC|--|3.3V|
+
+(*1) You can change using menuconfig.   
 
 # Set Clock Mode   
 
