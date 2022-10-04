@@ -1,5 +1,8 @@
-#ifndef MAIN_PCF8563_H_
-#define MAIN_PCF8563_H_
+#pragma once
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #include <time.h>
 #include <stdbool.h>
@@ -23,4 +26,7 @@ esp_err_t pcf8563_init_desc(i2c_dev_t *dev, i2c_port_t port, gpio_num_t sda_gpio
 esp_err_t pcf8563_reset(i2c_dev_t *dev);
 esp_err_t pcf8563_set_time(i2c_dev_t *dev, struct tm *time);
 esp_err_t pcf8563_get_time(i2c_dev_t *dev, struct tm *time);
-#endif /* MAIN_PCF8563_H_ */
+
+#ifdef __cplusplus
+}
+#endif

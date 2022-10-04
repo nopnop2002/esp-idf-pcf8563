@@ -29,7 +29,7 @@ esp_err_t pcf8563_init_desc(i2c_dev_t *dev, i2c_port_t port, gpio_num_t sda_gpio
     dev->sda_io_num = sda_gpio;
     dev->scl_io_num = scl_gpio;
     dev->clk_speed = I2C_FREQ_HZ;
-    return i2c_master_init(port, sda_gpio, scl_gpio);
+    return i2c_master_init(port, sda_gpio, scl_gpio, dev->clk_speed);
 }
 
 esp_err_t pcf8563_reset(i2c_dev_t *dev)
