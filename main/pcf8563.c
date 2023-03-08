@@ -59,7 +59,7 @@ esp_err_t pcf8563_set_time(i2c_dev_t *dev, struct tm *time)
     data[5] = dec2bcd(time->tm_mon + 1);	// tm_mon is 0 to 11
     data[6] = dec2bcd(time->tm_year - 2000);
 
-    return i2c_dev_write_reg(dev, PCF8563_ADDR_TIME, data, 7);
+    return i2c_dev_write_reg(dev, PCF8563_SEC_REG, data, 7);
 }
 
 esp_err_t pcf8563_get_time(i2c_dev_t *dev, struct tm *time)
@@ -70,7 +70,7 @@ esp_err_t pcf8563_get_time(i2c_dev_t *dev, struct tm *time)
     uint8_t data[7];
 
     /* read time */
-    esp_err_t res = i2c_dev_read_reg(dev, PCF8563_ADDR_TIME, data, 7);
+    esp_err_t res = i2c_dev_read_reg(dev, PCF8563_SEC_REG, data, 7);
         if (res != ESP_OK) return res;
 
     /* convert to unix time structure */
@@ -88,4 +88,77 @@ esp_err_t pcf8563_get_time(i2c_dev_t *dev, struct tm *time)
     return ESP_OK;
 }
 
+uint8_t check_err(esp_err_t res, uint8_t * data, uint16_t size, char * op) {
+    if (res != ESP_OK) {
+        for (int r=0; r < size;r++) {
+            printf("%d", data[r]);
+        }
+        printf("\n%s %s\n", op, esp_err_to_name(res));   
+    }
+    return res;
+}
 
+uint8_t pcf8563_get_flags(i2c_dev_t *dev) {
+    uint8_t flags[1];
+    esp_err_t res = i2c_dev_read_reg(dev, PCF8563_ADDR_STATUS2, &flags, 1);
+    check_err(res, flags, 1, "pcf8563_get_flags read_reg ADDR_STATUS2 failed");
+	
+    // & 0b00010011;	    //Mask only configuration bits
+    flags[0] = flags[0] & 0b00010011;
+    res = i2c_dev_write_reg(dev, PCF8563_ADDR_STATUS2, flags, 1);
+    check_err(res, flags, 1, "pcf8563_get_flags write_reg ADDR_STATUS2 failed");
+
+	return flags[0] & 0x0C;	//Mask unnecessary bits
+}
+
+void pcf8563_set_timer(i2c_dev_t *dev, uint8_t val, uint8_t freq) {
+    uint8_t _data[2];
+    esp_err_t res = i2c_dev_read_reg(dev, PCF8563_ADDR_STATUS2, &_data, 1);
+    check_err(res, _data, 1, "pcf8563_set_timer read_reg ADDR_STATUS2 failed");
+
+    uint8_t timer1[1];
+    uint8_t timer2[1];
+    res = i2c_dev_read_reg(dev, PCF8563_TIMER1_REG, &timer1, 1);
+    check_err(res, timer1, 1, "pcf8563_set_timer read_reg TIMER1_REG failed");
+
+    // Add interrupt
+    _data[0] |= 1 << 4;
+
+    timer1[0] |= (freq &  PCF8563_TIMER_TD10);
+    timer2[0] = val;
+
+    res = i2c_dev_write_reg(dev, PCF8563_ADDR_STATUS2,  &_data, 1);
+    check_err(res, _data, 1, "pcf8563_set_timer write_reg ADDR_STATUS2 failed");
+    res = i2c_dev_write_reg(dev, PCF8563_TIMER1_REG,  &timer1, 1);
+    check_err(res, timer1, 1, "pcf8563_set_timer write_reg TIMER1_REG failed");
+    res = i2c_dev_write_reg(dev, PCF8563_TIMER2_REG,  &timer2, 1);
+    check_err(res, timer2, 1, "pcf8563_set_timer write_reg TIMER2_REG failed");
+}
+
+void pcf8563_enable_timer(i2c_dev_t *dev) {
+    uint8_t _data[1];
+    esp_err_t res = i2c_dev_read_reg(dev, PCF8563_ADDR_STATUS2, &_data, 1);
+    check_err(res, _data, 1, "pcf8563_enable_timer read_reg ADDR_STATUS2 failed");
+
+    uint8_t timer1[1];
+    res = i2c_dev_read_reg(dev, PCF8563_TIMER1_REG, &timer1, 1);
+    check_err(res, timer1, 1, "pcf8563_enable_timer read_reg TIMER1_REG failed");
+
+    _data[0] &= ~PCF8563_TIMER_TF;
+    _data[0] |= (PCF8563_ALARM_AF | PCF8563_TIMER_TIE);
+    timer1[0] |= PCF8563_TIMER_TE;
+    res = i2c_dev_write_reg(dev, PCF8563_ADDR_STATUS2,  &_data, 1);
+    check_err(res, _data, 1, "pcf8563_enable_timer write_reg ADDR_STATUS2 failed");
+    res = i2c_dev_write_reg(dev, PCF8563_TIMER1_REG,  &timer1, 1);
+    check_err(res, timer1, 1, "pcf8563_enable_timer write_reg TIMER1_REG failed");
+}
+
+esp_err_t pcf8563_enable_clock(i2c_dev_t *dev, uint8_t freq) {
+    if (freq >= PCF8563_CLK_MAX) return false;
+    uint8_t _data[1];
+    _data[0] = freq | PCF8563_CLK_ENABLE;
+
+    esp_err_t res = i2c_dev_write_reg(dev, PCF8563_SQW_REG,  &_data, 1);
+    check_err(res, _data, 1, "pcf8563_enable_clock write_reg PCF8563_SQW_REG failed");
+    return res;
+}
