@@ -11,7 +11,7 @@ idf.py flash
 
 # Wireing  
 
-|DS3231||ESP32|ESP32S2/S3/H2|ESP32Cn|
+|PCF8563||ESP32|ESP32S2/S3/H2|ESP32Cn|
 |:-:|:-:|:-:|:-:|:-:|
 |SCL|--|GPIO22|GPIO02|GPIO06|
 |SDA|--|GPIO21|GPIO01|GPIO05|
