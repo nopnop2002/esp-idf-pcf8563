@@ -11,19 +11,20 @@
 
 #define TAG "I2CDEV"
 
-esp_err_t i2c_dev_init(i2c_port_t port, int sda, int scl)
+esp_err_t i2c_dev_init(const i2c_dev_t *dev)
 {
+	ESP_LOGI(TAG, "Legacy i2c driver is used");
 	i2c_config_t i2c_config = {
 		.mode = I2C_MODE_MASTER,
-		.sda_io_num = sda,
-		.scl_io_num = scl,
+		.sda_io_num = dev->sda_io_num,
+		.scl_io_num = dev->scl_io_num,
 		.sda_pullup_en = GPIO_PULLUP_ENABLE,
 		.scl_pullup_en = GPIO_PULLUP_ENABLE,
 		//.master.clk_speed = 1000000
-		.master.clk_speed = I2C_FREQ_HZ
+		.master.clk_speed = dev->clk_speed
 	};
-	i2c_param_config(port, &i2c_config);
-	return i2c_driver_install(port, I2C_MODE_MASTER, 0, 0, 0);
+	i2c_param_config(dev->port, &i2c_config);
+	return i2c_driver_install(dev->port, I2C_MODE_MASTER, 0, 0, 0);
 }
 
 esp_err_t i2c_dev_read(const i2c_dev_t *dev, const void *out_data, size_t out_size, void *in_data, size_t in_size)
@@ -38,7 +39,7 @@ esp_err_t i2c_dev_read(const i2c_dev_t *dev, const void *out_data, size_t out_si
 		i2c_master_write(cmd, (void *)out_data, out_size, true);
 	}
 	i2c_master_start(cmd);
-	i2c_master_write_byte(cmd, (dev->addr << 1) | 1, true);
+	i2c_master_write_byte(cmd, (dev->addr << 1) | I2C_MASTER_READ, true);
 	i2c_master_read(cmd, in_data, in_size, I2C_MASTER_LAST_NACK);
 	i2c_master_stop(cmd);
 

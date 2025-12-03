@@ -7,6 +7,8 @@
 
 #include "pcf8563.h"
 
+#define I2C_FREQ_HZ 400000
+
 #define CHECK_ARG(ARG) do { if (!ARG) return ESP_ERR_INVALID_ARG; } while (0)
 
 uint8_t bcd2dec(uint8_t val)
@@ -29,7 +31,7 @@ esp_err_t pcf8563_init_desc(i2c_dev_t *dev, i2c_port_t port, gpio_num_t sda_gpio
 	dev->sda_io_num = sda_gpio;
 	dev->scl_io_num = scl_gpio;
 	dev->clk_speed = I2C_FREQ_HZ;
-	return i2c_dev_init(port, sda_gpio, scl_gpio);
+	return i2c_dev_init(dev);
 }
 
 esp_err_t pcf8563_reset(i2c_dev_t *dev)
